@@ -1,45 +1,37 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import 'react-native-gesture-handler';
+//import { useFonts } from 'expo-font';
+import React from 'react';
+// import {  } from 'expo-status-bar';
+import { Platform, SafeAreaView, StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Routes from './app/Navigations/Routes';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+const App = () =>{
+  /*
+	const [loaded] = useFonts({
+            PoppinsRegular : require('./app/assets/fonts/Poppins-Regular.ttf'),
+            PoppinsSemiBold: require('./app/assets/fonts/Poppins-SemiBold.ttf'),
+            PoppinsBold : require('./app/assets/fonts/Poppins-Bold.ttf'),
+            PoppinsMedium : require('./app/assets/fonts/Poppins-Medium.ttf'),
+	});  
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+	if(!loaded){
+		  return null;
+	}*/
+  
+	return (
+      <SafeAreaProvider>
+          <SafeAreaView
+              style={{
+                  flex: 1,
+                  paddingTop:Platform.OS === 'android' ? 30 :  0
+                }}
+          >
+                  <StatusBar  />
+                  <Routes/>
+          </SafeAreaView>
+      </SafeAreaProvider>
+	);
+};
 
 export default App;
