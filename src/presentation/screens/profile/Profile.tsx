@@ -149,7 +149,7 @@ const Profile = ({ navigation } : ProfileScreenProps) => {
         // dismissed
       }
     } catch (error) {
-      Alert(error.message);
+      Alert.alert('Error', error.message);
     }
   };
 
