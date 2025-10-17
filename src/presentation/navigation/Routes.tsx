@@ -6,8 +6,8 @@ import {
 } from '@react-navigation/native';
 import StackNavigator from "./StackNavigator";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import themeContext from "../../shared/theme/themeContext";
-import { COLORS } from "../../shared/theme/theme";
+import themeContext from "@shared/theme/themeContext";
+import { COLORS } from "@shared/theme/theme";
 
 const Routes = () => {
     

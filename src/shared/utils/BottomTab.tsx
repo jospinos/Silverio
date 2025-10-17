@@ -7,7 +7,6 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { useSelector } from 'react-redux';
 import { GlobalStyleSheet } from '../theme/styleSheet';
 
 type Props = {

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, SafeAreaView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { COLORS, FONTS, IMAGES } from '../../../shared/theme/theme';
+import { COLORS, FONTS, IMAGES } from '@shared/theme/theme';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
-import Button from '../../components/common/button/Button';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
+import Button from '@presentation/components/common/button/Button';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/RootStackParamList';
+import { RootStackParamList } from '@presentation/navigation/RootStackParamList';
 
 type LoginScreenProps = StackScreenProps<RootStackParamList, 'Login'>;
 
