@@ -4,7 +4,7 @@ import React from 'react';
 // import {  } from 'expo-status-bar';
 import { Platform, SafeAreaView, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Routes from './app/Navigations/Routes';
+import Routes from '@presentation/navigation/StackNavigator';
 
 const App = () =>{
   /*
