@@ -1,10 +1,10 @@
 import React, {  useRef  } from 'react'
 import {SafeAreaView } from 'react-native';
-import Reelsitem from '../../components/common/Reelsitem';
+import Reelsitem from '@presentation/components/common/Reelsitem';
 import Swiper from 'react-native-swiper';
-import { IMAGES, VIDEO } from '../../../shared/theme/theme';
-import Header from '../../../shared/utils/Header';
-import PostShareSheet from '../../components/common/bottomsheet/PostShareSheet';
+import { IMAGES, VIDEO } from '@shared/theme/theme';
+import Header from '@shared/utils/Header';
+import PostShareSheet from '@presentation/components/common/bottomsheet/PostShareSheet';
 
 const ReelsData = [
   {
@@ -71,7 +71,7 @@ const ReelsData = [
 
 const Reels = () => {
 
-  const sheetRef = useRef<any>();
+  const sheetRef = useRef<any>(null);
 
   return (
     <SafeAreaView style={{flex:1}}>

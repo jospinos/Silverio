@@ -2,13 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '@react-navigation/native';
-import { COLORS, FONTS, SIZES } from '../../../../../shared/theme/theme';
-
-import home from '../../../assets/images/icons/home2.png';
-import collage from '../../../assets/images/icons/collage.png';
-import profile from '../../../assets/images/icons/user2.png';
-import heart from '../../../assets/images/icons/heart.png';
-import blog from '../../../assets/images/icons/blog.png';
+import { COLORS, FONTS, SIZES } from '@shared/theme/theme';
 
 const CustomNavigation = ({state,navigation,descriptors} : any) => {
     
@@ -128,11 +122,11 @@ const CustomNavigation = ({state,navigation,descriptors} : any) => {
                                         tintColor:isFocused ? COLORS.primary : colors.text,
                                     }}
                                     source={
-                                        label === "Home" ? home :
-                                        label === "Markets" ? heart:
-                                        label === "Change" ? collage:
-                                        label === "Wallet" ? blog :
-                                        label === "Profile" && profile
+                                        label === "Home" ? require('@assets/images/icons/home2.png') :
+                                        label === "Markets" ? require('@assets/images/icons/heart.png'):
+                                        label === "Change" ? require('@assets/images/icons/collage.png'):
+                                        label === "Wallet" ? require('@assets/images/icons/blog.png') :
+                                        label === "Profile" && require('@assets/images/icons/user2.png')
                                     }
                                 />
                             </TouchableOpacity>

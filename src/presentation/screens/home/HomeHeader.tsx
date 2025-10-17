@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, } from 'react-native'
 import React from 'react'
-import { FONTS, IMAGES } from '../../../shared/theme/theme'
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet'
+import { FONTS, IMAGES } from '@shared/theme/theme'
+import { GlobalStyleSheet } from '@shared/theme/styleSheet'
 import { useNavigation } from '@react-navigation/native'
 
 const HomeHeader = ({ theme } : any) => {

@@ -2,11 +2,9 @@ import React from 'react';
 import { Image, Text, View } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@react-navigation/native';
-import { COLORS, FONTS } from '../../../../shared/theme/theme';
+import { COLORS, FONTS } from '@shared/theme/theme';
 
-
-import ThumbUp from '../../assets/images/icons/thumbs-up.png';
-import Button from '../button/Button';
+import Button from '@presentation/components/common/button/Button';
 
 const PricingStyle2 = () => {
     
@@ -75,7 +73,7 @@ const PricingStyle2 = () => {
                                 height:44,
                                 width:44,
                             }}
-                            source={ThumbUp}
+                            source={require('@assets/images/icons/thumbs-up.png')}
                         />
                     </View>
                 </View>

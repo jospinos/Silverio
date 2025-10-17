@@ -1,109 +1,62 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { COLORS, FONTS, IMAGES } from '../../../shared/theme/theme';
-import { useTheme } from '@react-navigation/native';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
-import Button from '../../components/common/button/Button';
+import { ScrollView, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/RootStackParamList';
+import { RootStackParamList } from '@presentation/navigation/RootStackParamList';
+
+// Custom hook
+import { useForgotPassword } from '@presentation/hooks/auth/useForgotPassword';
+
+// Components
+import { LoadingOverlay } from '@presentation/components/common/LoadingOverlay';
+import { ForgotPasswordHeader } from '@presentation/components/auth/ForgotPasswordHeader';
+import { ForgotPasswordForm } from '@presentation/components/auth/ForgotPasswordForm';
 
 type ForgotScreenProps = StackScreenProps<RootStackParamList, 'Forgot'>;
 
-const Forgot = ({ navigation } : ForgotScreenProps)  => {
+const Forgot = ({ navigation }: ForgotScreenProps) => {
+  const {
+    formData,
+    errors,
+    isLoading,
+    updateField,
+    handleSendCode,
+    inputFocus,
+    setInputFocus,
+  } = useForgotPassword();
 
-    const theme = useTheme();
-    const { colors } : {colors : any} = theme;
+  const handleBackToLogin = () => {
+    navigation.navigate('Login');
+  };
 
-    const [show, setshow] = React.useState(true);
-
-    const [inputFocus, setFocus] = React.useState({
-        onFocus1: false,
-        onFocus2: false
-    })
-
-    return (
-        <SafeAreaView style={[GlobalStyleSheet.container,{padding:0, flex: 1 }]}>
-            <KeyboardAvoidingView
-            style={{flex: 1}}
-            //behavior={Platform.OS === 'ios' ? 'padding' : ''}
-            >
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                    <View style={{ backgroundColor: COLORS.secondary, flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <LinearGradient colors={['rgba(255, 255, 255, 0.00)', 'rgba(255, 255, 255, 0.08)']} style={GlobalStyleSheet.cricleGradient1}>
-                            </LinearGradient>
-                            <LinearGradient colors={['rgba(255, 255, 255, 0.00)', 'rgba(255, 255, 255, 0.08)']} style={GlobalStyleSheet.cricleGradient2}>
-                            </LinearGradient>
-                            <View
-                                style={{
-                                    paddingTop: 40,
-                                    paddingBottom: 20
-                                }}
-                            >
-                                <Image
-                                    style={{width:80,height:80}}
-                                    source={IMAGES.logo}
-                                />
-                            </View>
-                            <Text style={GlobalStyleSheet.formtitle}>Forgot Password</Text>
-                            <Text style={GlobalStyleSheet.forndescription}>Please enter your credentials to access your account and detail</Text>
-                        </View>
-                        <View style={[GlobalStyleSheet.loginarea, { backgroundColor: colors.card }]}>
-                            
-                            <Text style={[GlobalStyleSheet.inputlable, { color: colors.title }]}>Email</Text>
-                            <View
-                                style={[
-                                    GlobalStyleSheet.inputBox, {
-                                        backgroundColor: colors.input,
-                                    },
-                                    inputFocus.onFocus1 && {
-                                        borderColor: COLORS.primary,
-                                    }
-                                ]}
-                            >
-                                <Image
-                                    style={[
-                                        GlobalStyleSheet.inputimage,
-                                        {
-                                            tintColor: theme.dark ? colors.title : colors.text,
-                                        }
-                                    ]}
-                                    source={IMAGES.email}
-                                />
-
-                                <TextInput
-                                    style={[GlobalStyleSheet.input, { color: colors.title }]}
-                                    placeholder='Enter your email'
-                                    placeholderTextColor={colors.placeholder}
-                                    onFocus={() => setFocus({ ...inputFocus, onFocus1: true })}
-                                    onBlur={() => setFocus({ ...inputFocus, onFocus1: false })}
-                                />
-                            </View>
-
-                            <View style={{ marginTop: 10 }}>
-                                <Button
-                                    title="Next"
-                                    onPress={() => navigation.navigate('Otp')}
-                                />
-                            </View>
-
-                            <View style={{ flex: 1 }}></View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 15 }}>
-                                <Text style={{ ...FONTS.font, color: colors.text }}>Already have an account
-                                </Text>
-                                <TouchableOpacity
-                                    onPress={() => navigation.navigate('Login')}
-                                >
-                                    <Text style={{ ...FONTS.font, color: COLORS.primary, textDecorationLine: 'underline', textDecorationColor: '#2979F8', marginLeft: 5 }}>Sign In</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
-    );
+  return (
+    <>
+      <LoadingOverlay visible={isLoading} />
+      
+      <SafeAreaView style={[GlobalStyleSheet.container, { padding: 0, flex: 1 }]}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <ForgotPasswordHeader />
+            
+            <ForgotPasswordForm
+              email={formData.email}
+              errors={errors}
+              inputFocus={inputFocus}
+              isLoading={isLoading}
+              onEmailChange={(email) => updateField('email', email)}
+              onEmailFocus={() => setInputFocus('email', true)}
+              onEmailBlur={() => setInputFocus('email', false)}
+              onSendCode={handleSendCode}
+              onBackToLogin={handleBackToLogin}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </>
+  );
 };
 
 export default Forgot;

@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity, Animated, Dimensions, Share, Alert, SafeAreaView } from 'react-native';
-import { COLORS, FONTS, IMAGES, SIZES } from '../../../shared/theme/theme';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
+import { COLORS, FONTS, IMAGES, SIZES } from '@shared/theme/theme';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 import LinearGradient from 'react-native-linear-gradient';
-import Followbtn from '../../components/common/button/Followbtn';
-import Sharebtn from '../../components/common/button/Sharebtn';
+import Followbtn from '@presentation/components/common/button/Followbtn';
+import Sharebtn from '@presentation/components/common/button/Sharebtn';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
 import ProfilePostData from './ProfilePostData';
@@ -112,7 +112,7 @@ type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
 
 const Profile = ({ navigation } : ProfileScreenProps) => {
 
-  const scrollRef = useRef<any>();
+  const scrollRef = useRef<any>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
 

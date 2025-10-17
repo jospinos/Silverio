@@ -1,7 +1,7 @@
 import React, { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { View } from 'react-native';
-import PostCard from '../../components/common/PostCard';
-import { IMAGES, SIZES, VIDEO } from '../../../shared/theme/theme';
+import PostCard from '@presentation/components/common/PostCard';
+import { IMAGES, SIZES, VIDEO } from '@shared/theme/theme';
 
 const postList = [
     {

@@ -2,9 +2,9 @@ import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, u
 import { View, Text, FlatList, TouchableOpacity, Image, Keyboard } from 'react-native';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
-import { GlobalStyleSheet } from '../../../../shared/theme/styleSheet';
-import { FONTS, IMAGES } from '../../../../shared/theme/theme';
-import Button from '../../components/button/Button';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
+import { FONTS, IMAGES } from '@shared/theme/theme';
+import Button from '@presentation/components/common/button/Button';
 import { useNavigation } from '@react-navigation/native';
 
 const ShareData = [
@@ -196,6 +196,7 @@ const PostShareSheet = (props : any, ref: any) => {
                 appearsOnIndex={0}
             />
         ),
+        []
     );
 
     const navigation = useNavigation<any>();

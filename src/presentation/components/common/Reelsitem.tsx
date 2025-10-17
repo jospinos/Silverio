@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { COLORS, FONTS, IMAGES } from '../../../shared/theme/theme';
-import LikeBtn from '../components/likebtn/LikeBtn';
+import { COLORS, FONTS, IMAGES } from '@shared/theme/theme';
+import LikeBtn from '@presentation/components/common/likebtn/LikeBtn';
 import { useNavigation } from '@react-navigation/native';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 import Video from 'react-native-video';
 
 const Reelsitem = ({ like, comment, save, send, image, text, music, holder, sheetRef, reelsvideo, hasStory } : any) => {

@@ -1,7 +1,7 @@
 import { View,  FlatList } from 'react-native'
 import React from 'react'
-import { IMAGES } from '../../../shared/theme/theme';
-import StoryItem from '../../components/common/story/StoryItem';
+import { IMAGES } from '@shared/theme/theme';
+import StoryItem from '@presentation/components/common/story/StoryItem';
 import { useTheme } from '@react-navigation/native';
 
 const StoryData = [

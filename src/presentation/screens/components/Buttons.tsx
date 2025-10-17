@@ -1,13 +1,13 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import Header from '../../../shared/utils/Header';
-import { COLORS, FONTS } from '../../../shared/theme/theme';
-import Button from '../../components/common/button/Button';
-import ButtonLight from '../../components/common/button/ButtonLight';
-import ButtonOutline from '../../components/common/button/ButtonOutline';
-import Badge from '../../components/common/Badge/Badge';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
+import Header from '@shared/utils/Header';
+import { COLORS, FONTS } from '@shared/theme/theme';
+import Button from '@presentation/components/common/button/Button';
+import ButtonLight from '@presentation/components/common/button/ButtonLight';
+import ButtonOutline from '@presentation/components/common/button/ButtonOutline';
+import Badge from '@presentation/components/common/Badge/Badge';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 
 const Buttons = () => {
 

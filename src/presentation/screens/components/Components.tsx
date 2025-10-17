@@ -3,23 +3,23 @@ import { SafeAreaView, ScrollView, Text, View, Image } from 'react-native';
 import FeatherIcon from "react-native-vector-icons/Feather";
 import Ripple from 'react-native-material-ripple';
 import { useTheme } from '@react-navigation/native';
-import { FONTS, IMAGES } from '../../../shared/theme/theme';
-import Header from '../../../shared/utils/Header';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
+import { FONTS, IMAGES } from '@shared/theme/theme';
+import Header from '@shared/utils/Header';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 
-const accordionIco = require('../../assets/images/icons/accordion.png');
-const bottomSheet = require('../../assets/images/icons/bottomSheet.png');
-const modal = require('../../assets/images/icons/modal.png');
-const chart = require('../../assets/images/icons/chart.png');
-const divider = require('../../assets/images/icons/divider.png');
-const badge = require('../../assets/images/icons/badge.png');
-const input = require('../../assets/images/icons/input.png');
-const list = require('../../assets/images/icons/list.png');
-const pricing = require('../../assets/images/icons/pricing.png');
-const share = require('../../assets/images/icons/share.png');
-const tabs = require('../../assets/images/icons/tabs.png');
-const table = require('../../assets/images/icons/table.png');
-const toggle = require('../../assets/images/icons/toggle.png');
+const accordionIco = require('@assets/images/icons/accordion.png');
+const bottomSheet = require('@assets/images/icons/bottomSheet.png');
+const modal = require('@assets/images/icons/modal.png');
+const chart = require('@assets/images/icons/chart.png');
+const divider = require('@assets/images/icons/divider.png');
+const badge = require('@assets/images/icons/badge.png');
+const input = require('@assets/images/icons/input.png');
+const list = require('@assets/images/icons/list.png');
+const pricing = require('@assets/images/icons/pricing.png');
+const share = require('@assets/images/icons/share.png');
+const tabs = require('@assets/images/icons/tabs.png');
+const table = require('@assets/images/icons/table.png');
+const toggle = require('@assets/images/icons/toggle.png');
 
 const Components = (props : any) => {
 

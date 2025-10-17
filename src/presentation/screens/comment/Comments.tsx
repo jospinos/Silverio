@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONTS, IMAGES } from '../../../shared/theme/theme';
+import { COLORS, FONTS, IMAGES } from '@shared/theme/theme';
 import { useTheme } from '@react-navigation/native';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 import { TextInput } from 'react-native-gesture-handler';
 import Collapsible from 'react-native-collapsible';
-import LikeBtn from '../../components/common/likebtn/LikeBtn';
+import LikeBtn from '@presentation/components/common/likebtn/LikeBtn';
 import { useNavigation } from '@react-navigation/native';
-import ChatoptionSheet from '../../components/common/bottomsheet/ChatoptionSheet';
+import ChatoptionSheet from '@presentation/components/common/bottomsheet/ChatoptionSheet';
 
 const Comment = [
     {
@@ -357,7 +357,7 @@ const Comments = () => {
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
 
-    const moresheet = useRef<any>();
+    const moresheet = useRef<any>(null);
 
     const navigation = useNavigation<any>();
 

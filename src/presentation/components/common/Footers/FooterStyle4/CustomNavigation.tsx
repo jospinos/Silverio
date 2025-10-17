@@ -1,13 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import { COLORS, FONTS } from '../../../../../shared/theme/theme';
-
-import home from '../../../assets/images/icons/home.png';
-import search from '../../../assets/images/icons/search.png';
-import chat from '../../../assets/images/icons/chat.png';
-import profile from '../../../assets/images/icons/user.png';
-import addition from '../../../assets/images/icons/addition.png';
+import { COLORS, FONTS } from '@shared/theme/theme';
 
 const CustomNavigation = ({state,navigation,descriptors} : any) => {
 
@@ -76,11 +70,11 @@ const CustomNavigation = ({state,navigation,descriptors} : any) => {
                                         tintColor:isFocused ? COLORS.primary : colors.text,
                                     }}
                                     source={
-                                        label === "Home" ? home :
-                                        label === "Search" ? search:
-                                        label === "Post" ? addition:
-                                        label === "Chat" ? chat :
-                                        label === "Profile" && profile
+                                        label === "Home" ? require('@assets/images/icons/home.png') :
+                                        label === "Search" ? require('@assets/images/icons/search.png'):
+                                        label === "Post" ? require('@assets/images/icons/addition.png'):
+                                        label === "Chat" ? require('@assets/images/icons/chat.png') :
+                                        label === "Profile" && require('@assets/images/icons/user.png')
                                     }
                                 />
                                 <Text style={{...FONTS.fontSm,color:isFocused ? colors.title : colors.text}}>{label}</Text>

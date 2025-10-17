@@ -2,13 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { COLORS, FONTS, SIZES } from '../../../../../shared/theme/theme';
-
-import home from '../../../assets/images/icons/home.png';
-import market from '../../../assets/images/icons/clock.png';
-import exchange from '../../../assets/images/icons/exchange.png';
-import wallet from '../../../assets/images/icons/wallet.png';
-import profile from '../../../assets/images/icons/user2.png';
+import { COLORS, FONTS, SIZES } from '@shared/theme/theme';
 
 const CustomNavigation = ({state,navigation,descriptors}) => {
     
@@ -173,11 +167,11 @@ const CustomNavigation = ({state,navigation,descriptors}) => {
                                             tintColor:isFocused ? COLORS.white : colors.text,
                                         }}
                                         source={
-                                            label === "Home" ? home :
-                                            label === "Markets" ? market:
-                                            label === "Change" ? exchange:
-                                            label === "Wallet" ? wallet :
-                                            label === "Profile" && profile
+                                            label === "Home" ? require('@assets/images/icons/home.png') :
+                                            label === "Markets" ? require('@assets/images/icons/clock.png'):
+                                            label === "Change" ? require('@assets/images/icons/exchange.png'):
+                                            label === "Wallet" ? require('@assets/images/icons/wallet.png') :
+                                            label === "Profile" && require('@assets/images/icons/user2.png')
                                         }
                                     />
                                 </Animated.View>

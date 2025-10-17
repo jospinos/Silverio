@@ -2,13 +2,13 @@ import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '@react-navigation/native';
-import { COLORS, FONTS, SIZES } from '../../../../../shared/theme/theme';
+import { COLORS, FONTS, SIZES } from '@shared/theme/theme';
 
-import home from '../../../assets/images/icons/home2.png';
-import collage from '../../../assets/images/icons/collage.png';
-import profile from '../../../assets/images/icons/user2.png';
-import heart from '../../../assets/images/icons/heart.png';
-import blog from '../../../assets/images/icons/blog.png';
+const home = require('@assets/images/icons/home2.png');
+const collage = require('@assets/images/icons/collage.png');
+const profile = require('@assets/images/icons/user2.png');
+const heart = require('@assets/images/icons/heart.png');
+const blog = require('@assets/images/icons/blog.png');
 
 const CustomNavigation = ({state,navigation,descriptors}) => {
     

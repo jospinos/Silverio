@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Image,TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, IMAGES } from '../../../shared/theme/theme';
-import Header from '../../../shared/utils/Header';
-import { GlobalStyleSheet } from '../../../shared/theme/styleSheet';
+import { COLORS, IMAGES } from '@shared/theme/theme';
+import Header from '@shared/utils/Header';
+import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 import { useTheme } from '@react-navigation/native';
 
 const SettingData =[
