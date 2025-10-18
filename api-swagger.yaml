@@ -1,0 +1,1642 @@
+openapi: 3.0.3
+info:
+  title: Silverio Social Network API
+  description: |
+    API completa para la aplicación móvil Silverio - Red Social
+    
+    Esta API soporta todas las funcionalidades de la app móvil incluyendo:
+    - Autenticación y autorización
+    - Gestión de perfiles de usuario
+    - Publicaciones e interacciones sociales
+    - Historias/Stories
+    - Reels y contenido multimedia
+    - Chat y mensajería
+    - Notificaciones
+    - Búsqueda y descubrimiento
+    - Configuraciones de usuario
+    
+  version: 1.0.0
+  contact:
+    name: Silverio API Support
+    email: support@silverio.com
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.silverio.com/v1
+    description: Servidor de Producción
+  - url: https://dev-api.silverio.com/v1
+    description: Servidor de Desarrollo
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ===========================
+  # AUTENTICACIÓN
+  # ===========================
+  /auth/login:
+    post:
+      tags: ["Authentication"]
+      summary: Iniciar sesión
+      description: Autenticar usuario con email/username y contraseña
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password]
+              properties:
+                identifier:
+                  type: string
+                  description: Email o nombre de usuario
+                  example: "alex_techie_2123"
+                password:
+                  type: string
+                  format: password
+                  example: "mySecurePassword123"
+                rememberMe:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/register:
+    post:
+      tags: ["Authentication"]
+      summary: Registrar nuevo usuario
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password, fullName]
+              properties:
+                username:
+                  type: string
+                  pattern: '^[a-zA-Z0-9_]{3,20}$'
+                  example: "alex_techie_2123"
+                email:
+                  type: string
+                  format: email
+                  example: "alex@example.com"
+                password:
+                  type: string
+                  minLength: 8
+                  example: "mySecurePassword123"
+                fullName:
+                  type: string
+                  example: "Alex Techie"
+                phoneNumber:
+                  type: string
+                  example: "+1234567890"
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Usuario o email ya existe
+
+  /auth/forgot-password:
+    post:
+      tags: ["Authentication"]
+      summary: Solicitar recuperación de contraseña
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Email de recuperación enviado
+        '404':
+          description: Email no encontrado
+
+  /auth/verify-otp:
+    post:
+      tags: ["Authentication"]
+      summary: Verificar código OTP
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, otp]
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  pattern: '^[0-9]{6}$'
+      responses:
+        '200':
+          description: OTP verificado correctamente
+        '400':
+          description: OTP inválido o expirado
+
+  /auth/change-password:
+    post:
+      tags: ["Authentication"]
+      summary: Cambiar contraseña
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Contraseña cambiada exitosamente
+        '400':
+          description: Contraseña actual incorrecta
+
+  /auth/logout:
+    post:
+      tags: ["Authentication"]
+      summary: Cerrar sesión
+      responses:
+        '200':
+          description: Sesión cerrada exitosamente
+
+  # ===========================
+  # PERFIL DE USUARIO
+  # ===========================
+  /profile:
+    get:
+      tags: ["Profile"]
+      summary: Obtener perfil del usuario actual
+      responses:
+        '200':
+          description: Perfil del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+    
+    put:
+      tags: ["Profile"]
+      summary: Actualizar perfil del usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Perfil actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /profile/{userId}:
+    get:
+      tags: ["Profile"]
+      summary: Obtener perfil de otro usuario
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Perfil del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /profile/followers:
+    get:
+      tags: ["Profile"]
+      summary: Obtener lista de seguidores
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de seguidores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowersList'
+
+  /profile/following:
+    get:
+      tags: ["Profile"]
+      summary: Obtener lista de seguidos
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de usuarios seguidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowingList'
+
+  /profile/follow/{userId}:
+    post:
+      tags: ["Profile"]
+      summary: Seguir a un usuario
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario seguido exitosamente
+    
+    delete:
+      tags: ["Profile"]
+      summary: Dejar de seguir a un usuario
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario no seguido exitosamente
+
+  /profile/suggestions:
+    get:
+      tags: ["Profile"]
+      summary: Obtener sugerencias de usuarios para seguir
+      responses:
+        '200':
+          description: Lista de usuarios sugeridos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSuggestion'
+
+  # ===========================
+  # PUBLICACIONES (POSTS)
+  # ===========================
+  /posts:
+    get:
+      tags: ["Posts"]
+      summary: Obtener feed de publicaciones
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de publicaciones del feed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostsList'
+    
+    post:
+      tags: ["Posts"]
+      summary: Crear nueva publicación
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        '201':
+          description: Publicación creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
+  /posts/{postId}:
+    get:
+      tags: ["Posts"]
+      summary: Obtener publicación específica
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalles de la publicación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    
+    delete:
+      tags: ["Posts"]
+      summary: Eliminar publicación
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Publicación eliminada exitosamente
+
+  /posts/{postId}/like:
+    post:
+      tags: ["Posts"]
+      summary: Dar like a una publicación
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Like agregado exitosamente
+    
+    delete:
+      tags: ["Posts"]
+      summary: Quitar like de una publicación
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Like removido exitosamente
+
+  /posts/{postId}/comments:
+    get:
+      tags: ["Posts"]
+      summary: Obtener comentarios de una publicación
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de comentarios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentsList'
+    
+    post:
+      tags: ["Posts"]
+      summary: Agregar comentario a una publicación
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                  example: "¡Excelente publicación!"
+                parentCommentId:
+                  type: string
+                  description: ID del comentario padre para respuestas
+      responses:
+        '201':
+          description: Comentario agregado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+  /posts/user/{userId}:
+    get:
+      tags: ["Posts"]
+      summary: Obtener publicaciones de un usuario específico
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de publicaciones del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostsList'
+
+  # ===========================
+  # HISTORIAS (STORIES)
+  # ===========================
+  /stories:
+    get:
+      tags: ["Stories"]
+      summary: Obtener historias del feed
+      responses:
+        '200':
+          description: Lista de historias disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+    
+    post:
+      tags: ["Stories"]
+      summary: Crear nueva historia
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [media]
+              properties:
+                media:
+                  type: string
+                  format: binary
+                  description: Archivo de imagen o video
+                caption:
+                  type: string
+                  example: "¡Día increíble!"
+                music:
+                  type: string
+                  description: ID de la música para la historia
+      responses:
+        '201':
+          description: Historia creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+
+  /stories/{storyId}:
+    delete:
+      tags: ["Stories"]
+      summary: Eliminar historia
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Historia eliminada exitosamente
+
+  /stories/user/{userId}:
+    get:
+      tags: ["Stories"]
+      summary: Obtener historias de un usuario específico
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Historias del usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Story'
+
+  # ===========================
+  # REELS
+  # ===========================
+  /reels:
+    get:
+      tags: ["Reels"]
+      summary: Obtener feed de reels
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de reels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reels:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reel'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    
+    post:
+      tags: ["Reels"]
+      summary: Crear nuevo reel
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [video]
+              properties:
+                video:
+                  type: string
+                  format: binary
+                  description: Archivo de video
+                caption:
+                  type: string
+                  example: "¡Mira este increíble reel!"
+                tags:
+                  type: string
+                  example: "#Nature #Photography #Ballon"
+                music:
+                  type: string
+                  description: ID de la música para el reel
+      responses:
+        '201':
+          description: Reel creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reel'
+
+  /reels/{reelId}/like:
+    post:
+      tags: ["Reels"]
+      summary: Dar like a un reel
+      parameters:
+        - name: reelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Like agregado exitosamente
+
+  /reels/user/{userId}:
+    get:
+      tags: ["Reels"]
+      summary: Obtener reels de un usuario específico
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de reels del usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reels:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reel'
+
+  # ===========================
+  # CHAT Y MENSAJERÍA
+  # ===========================
+  /chats:
+    get:
+      tags: ["Chat"]
+      summary: Obtener lista de conversaciones
+      responses:
+        '200':
+          description: Lista de conversaciones
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatConversation'
+
+  /chats/{chatId}/messages:
+    get:
+      tags: ["Chat"]
+      summary: Obtener mensajes de una conversación
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Lista de mensajes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagesList'
+    
+    post:
+      tags: ["Chat"]
+      summary: Enviar mensaje
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "Hola, ¿cómo estás?"
+                media:
+                  type: string
+                  format: binary
+                  description: Archivo de imagen, video o audio
+                messageType:
+                  type: string
+                  enum: [text, image, video, audio, voice_note]
+                  default: text
+      responses:
+        '201':
+          description: Mensaje enviado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /chats/create:
+    post:
+      tags: ["Chat"]
+      summary: Crear nueva conversación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [participantIds]
+              properties:
+                participantIds:
+                  type: array
+                  items:
+                    type: string
+                  example: ["user123", "user456"]
+                isGroup:
+                  type: boolean
+                  default: false
+                groupName:
+                  type: string
+                  example: "Grupo de Amigos"
+      responses:
+        '201':
+          description: Conversación creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatConversation'
+
+  # ===========================
+  # NOTIFICACIONES
+  # ===========================
+  /notifications:
+    get:
+      tags: ["Notifications"]
+      summary: Obtener notificaciones del usuario
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Lista de notificaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationsList'
+
+  /notifications/{notificationId}/read:
+    put:
+      tags: ["Notifications"]
+      summary: Marcar notificación como leída
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notificación marcada como leída
+
+  /notifications/read-all:
+    put:
+      tags: ["Notifications"]
+      summary: Marcar todas las notificaciones como leídas
+      responses:
+        '200':
+          description: Todas las notificaciones marcadas como leídas
+
+  # ===========================
+  # BÚSQUEDA
+  # ===========================
+  /search:
+    get:
+      tags: ["Search"]
+      summary: Búsqueda global
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "Alex Techie"
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [users, posts, hashtags, all]
+            default: all
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Resultados de búsqueda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+
+  /search/recent:
+    get:
+      tags: ["Search"]
+      summary: Obtener búsquedas recientes del usuario
+      responses:
+        '200':
+          description: Lista de búsquedas recientes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  searches:
+                    type: array
+                    items:
+                      type: string
+
+  # ===========================
+  # MÚSICA
+  # ===========================
+  /music:
+    get:
+      tags: ["Music"]
+      summary: Obtener biblioteca de música
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [trending, saved, recent]
+            default: trending
+      responses:
+        '200':
+          description: Lista de música
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  music:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MusicTrack'
+
+  /music/save/{musicId}:
+    post:
+      tags: ["Music"]
+      summary: Guardar música como favorita
+      parameters:
+        - name: musicId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Música guardada exitosamente
+
+  # ===========================
+  # CONFIGURACIONES
+  # ===========================
+  /settings/notification:
+    get:
+      tags: ["Settings"]
+      summary: Obtener configuración de notificaciones
+      responses:
+        '200':
+          description: Configuración actual de notificaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+    
+    put:
+      tags: ["Settings"]
+      summary: Actualizar configuración de notificaciones
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSettings'
+      responses:
+        '200':
+          description: Configuración actualizada exitosamente
+
+  /settings/privacy:
+    get:
+      tags: ["Settings"]
+      summary: Obtener configuración de privacidad
+      responses:
+        '200':
+          description: Configuración actual de privacidad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacySettings'
+    
+    put:
+      tags: ["Settings"]
+      summary: Actualizar configuración de privacidad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacySettings'
+      responses:
+        '200':
+          description: Configuración actualizada exitosamente
+
+  /settings/security/login-activity:
+    get:
+      tags: ["Settings"]
+      summary: Obtener actividad de inicio de sesión
+      responses:
+        '200':
+          description: Historial de actividad de login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LoginActivity'
+
+# ===========================
+# COMPONENTES REUTILIZABLES
+# ===========================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    BadRequest:
+      description: Solicitud incorrecta
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: No autorizado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # Respuestas de autenticación
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Login exitoso"
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+            token:
+              type: string
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            refreshToken:
+              type: string
+            expiresIn:
+              type: integer
+              example: 86400
+
+    # Usuario
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "user123"
+        username:
+          type: string
+          example: "alex_techie_2123"
+        email:
+          type: string
+          format: email
+          example: "alex@example.com"
+        fullName:
+          type: string
+          example: "Alex Techie"
+        profileImage:
+          type: string
+          format: uri
+          example: "https://api.silverio.com/images/profiles/user123.jpg"
+        bio:
+          type: string
+          example: "Music Lover 🎵\\nWish me 09 September 🍰\\nFashion, LifeStyle, Video Creator"
+        isVerified:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # Perfil completo del usuario
+    UserProfile:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            postsCount:
+              type: integer
+              example: 54
+            followersCount:
+              type: integer
+              example: 1250
+            followingCount:
+              type: integer
+              example: 500
+            isFollowing:
+              type: boolean
+              example: false
+            isFollowedBy:
+              type: boolean
+              example: false
+            backgroundImage:
+              type: string
+              format: uri
+            phoneNumber:
+              type: string
+            birthDate:
+              type: string
+              format: date
+            location:
+              type: string
+            website:
+              type: string
+              format: uri
+            isPrivate:
+              type: boolean
+              default: false
+
+    # Solicitud de actualización de perfil
+    UpdateProfileRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+        bio:
+          type: string
+        phoneNumber:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        location:
+          type: string
+        website:
+          type: string
+          format: uri
+        isPrivate:
+          type: boolean
+
+    # Publicación
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "post123"
+        user:
+          $ref: '#/components/schemas/User'
+        caption:
+          type: string
+          example: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              url:
+                type: string
+                format: uri
+              thumbnailUrl:
+                type: string
+                format: uri
+        tags:
+          type: string
+          example: "#Nature #Photography #Ballon"
+        likesCount:
+          type: integer
+          example: 128
+        commentsCount:
+          type: integer
+          example: 28
+        sharesCount:
+          type: integer
+          example: 5
+        isLiked:
+          type: boolean
+          example: false
+        isSaved:
+          type: boolean
+          example: false
+        location:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # Solicitud de creación de publicación
+    CreatePostRequest:
+      type: object
+      required: [images]
+      properties:
+        caption:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+        tags:
+          type: string
+        location:
+          type: string
+
+    # Lista de publicaciones
+    PostsList:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Comentario
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+          example: "¡Excelente publicación!"
+        likesCount:
+          type: integer
+          example: 5
+        isLiked:
+          type: boolean
+          example: false
+        parentCommentId:
+          type: string
+          nullable: true
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        createdAt:
+          type: string
+          format: date-time
+
+    # Lista de comentarios
+    CommentsList:
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Historia
+    Story:
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        mediaUrl:
+          type: string
+          format: uri
+        mediaType:
+          type: string
+          enum: [image, video]
+        thumbnailUrl:
+          type: string
+          format: uri
+        caption:
+          type: string
+        music:
+          $ref: '#/components/schemas/MusicTrack'
+        viewsCount:
+          type: integer
+        isViewed:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    # Reel
+    Reel:
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        videoUrl:
+          type: string
+          format: uri
+        thumbnailUrl:
+          type: string
+          format: uri
+        caption:
+          type: string
+        tags:
+          type: string
+        music:
+          $ref: '#/components/schemas/MusicTrack'
+        likesCount:
+          type: integer
+          example: 456000
+        commentsCount:
+          type: integer
+          example: 56000
+        sharesCount:
+          type: integer
+          example: 512
+        viewsCount:
+          type: integer
+          example: 30000
+        isLiked:
+          type: boolean
+        isSaved:
+          type: boolean
+        duration:
+          type: integer
+          description: Duración en segundos
+        createdAt:
+          type: string
+          format: date-time
+
+    # Conversación de chat
+    ChatConversation:
+      type: object
+      properties:
+        id:
+          type: string
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        lastMessage:
+          $ref: '#/components/schemas/Message'
+        unreadCount:
+          type: integer
+        isGroup:
+          type: boolean
+        groupName:
+          type: string
+        groupImage:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # Mensaje
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        sender:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+        mediaUrl:
+          type: string
+          format: uri
+        messageType:
+          type: string
+          enum: [text, image, video, audio, voice_note]
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    # Lista de mensajes
+    MessagesList:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Notificación
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [like, comment, follow, mention, story_view, direct_message]
+        title:
+          type: string
+        message:
+          type: string
+        fromUser:
+          $ref: '#/components/schemas/User'
+        relatedPost:
+          $ref: '#/components/schemas/Post'
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    # Lista de notificaciones
+    NotificationsList:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        unreadCount:
+          type: integer
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Resultados de búsqueda
+    SearchResults:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        hashtags:
+          type: array
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+              postsCount:
+                type: integer
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Pista musical
+    MusicTrack:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        duration:
+          type: integer
+          description: Duración en segundos
+        audioUrl:
+          type: string
+          format: uri
+        coverImageUrl:
+          type: string
+          format: uri
+        isTrending:
+          type: boolean
+        isSaved:
+          type: boolean
+
+    # Lista de seguidores
+    FollowersList:
+      type: object
+      properties:
+        followers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Lista de seguidos
+    FollowingList:
+      type: object
+      properties:
+        following:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Sugerencia de usuario
+    UserSuggestion:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            mutualFollowersCount:
+              type: integer
+            suggestionReason:
+              type: string
+              example: "Seguido por alex_techie y 5 más"
+
+    # Configuración de notificaciones
+    NotificationSettings:
+      type: object
+      properties:
+        pushNotifications:
+          type: boolean
+        emailNotifications:
+          type: boolean
+        likes:
+          type: boolean
+        comments:
+          type: boolean
+        follows:
+          type: boolean
+        directMessages:
+          type: boolean
+        storyViews:
+          type: boolean
+        mentions:
+          type: boolean
+
+    # Configuración de privacidad
+    PrivacySettings:
+      type: object
+      properties:
+        isPrivateAccount:
+          type: boolean
+        showOnlineStatus:
+          type: boolean
+        allowMessageRequests:
+          type: boolean
+        showStoryViewers:
+          type: boolean
+        allowTagsInPosts:
+          type: boolean
+        allowTagsInStories:
+          type: boolean
+
+    # Actividad de login
+    LoginActivity:
+      type: object
+      properties:
+        id:
+          type: string
+        deviceInfo:
+          type: string
+        location:
+          type: string
+        ipAddress:
+          type: string
+        isCurrentSession:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    # Paginación
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 10
+        totalItems:
+          type: integer
+          example: 200
+        itemsPerPage:
+          type: integer
+          example: 20
+        hasNext:
+          type: boolean
+          example: true
+        hasPrevious:
+          type: boolean
+          example: false
+
+    # Respuesta de error
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              example: "Los datos proporcionados no son válidos"
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+
+tags:
+  - name: Authentication
+    description: Operaciones de autenticación y autorización
+  - name: Profile
+    description: Gestión de perfiles de usuario
+  - name: Posts
+    description: Publicaciones y contenido del feed
+  - name: Stories
+    description: Historias temporales
+  - name: Reels
+    description: Videos cortos y entretenimiento
+  - name: Chat
+    description: Mensajería y comunicación
+  - name: Notifications
+    description: Notificaciones del sistema
+  - name: Search
+    description: Búsqueda y descubrimiento
+  - name: Music
+    description: Biblioteca musical
+  - name: Settings
+    description: Configuraciones de usuario
