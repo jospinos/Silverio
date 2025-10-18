@@ -20,6 +20,7 @@ function BottomNavigation() {
     return (
         <SafeAreaView style={{flex:1,backgroundColor:colors.card}}>
             <Tab.Navigator
+                id={undefined}
                 initialRouteName='Home'
                 screenOptions={{
                     headerShown: false
@@ -35,5 +36,4 @@ function BottomNavigation() {
         </SafeAreaView>
     );
 }
-
 export default BottomNavigation;

@@ -7,16 +7,18 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
-  refreshToken: string;
-  token_type: string;
-  expires_in: number;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    avatar?: string;
-  };
+  data: {
+    token: string;
+    refreshToken: string;
+    token_type: string;
+    expires_in: number;
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      avatar?: string;
+    };
+  }
 }
 
 export interface ApiError {
@@ -29,14 +31,14 @@ class AuthService {
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
-      
+
       // Guardar tokens en AsyncStorage
       await AsyncStorage.multiSet([
-        ['auth_token', response.data.token],
-        ['refresh_token', response.data.refreshToken],
-        ['user_data', JSON.stringify(response.data.user)],
+        ['auth_token', response.data.data.token],
+        ['refresh_token', response.data.data.refreshToken],
+        ['user_data', JSON.stringify(response.data.data.user)],
       ]);
-      
+
       return response.data;
     } catch (error: any) {
       if (error.response?.data) {

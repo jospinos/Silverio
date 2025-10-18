@@ -3,6 +3,7 @@ import { View, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform } from '
 import { GlobalStyleSheet } from '@shared/theme/styleSheet';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '@presentation/navigation/RootStackParamList';
+import { useAppSelector } from '@store/hooks';
 
 // Custom hook
 import { useLogin } from '@presentation/hooks/auth/useLogin';
@@ -26,6 +27,15 @@ const Login = ({ navigation }: LoginScreenProps) => {
     inputFocus,
     setInputFocus,
   } = useLogin();
+
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigation.navigate('DrawerNavigation', { screen: 'Home' });
+    }
+  }, [isAuthenticated, navigation]);
 
   const handleForgotPassword = () => {
     navigation.navigate('Forgot');

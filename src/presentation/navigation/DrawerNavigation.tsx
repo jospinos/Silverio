@@ -15,6 +15,7 @@ const DrawerNavigation = () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.card }}>
             <Drawer.Navigator
+                id={undefined}
                 initialRouteName='BottomNavigation'
                 screenOptions={{
                     headerShown: false,

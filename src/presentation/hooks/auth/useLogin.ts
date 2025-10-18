@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@presentation/navigation/RootStackParamList';
-import { authService, ApiError } from '@api/services/authService';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { loginUser, clearError } from '@store/slices/authSlice';
 
 type LoginNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -42,6 +43,8 @@ export interface UseLoginReturn {
 
 export const useLogin = (): UseLoginReturn => {
   const navigation = useNavigation<LoginNavigationProp>();
+  const dispatch = useAppDispatch();
+  const { isLoading, error } = useAppSelector((state) => state.auth);
   
   // Form state
   const [formData, setFormData] = useState<LoginFormData>({
@@ -50,7 +53,6 @@ export const useLogin = (): UseLoginReturn => {
   });
   
   const [errors, setErrors] = useState<LoginFormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
   
   // UI state
   const [showPassword, setShowPassword] = useState(false);
@@ -58,6 +60,18 @@ export const useLogin = (): UseLoginReturn => {
     email: false,
     password: false,
   });
+
+  // Clear Redux error when component mounts
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  // Handle Redux errors
+  useEffect(() => {
+    if (error) {
+      setErrors({ general: error });
+    }
+  }, [error]);
 
   // Form handlers
   const updateField = (field: keyof LoginFormData, value: string) => {
@@ -93,56 +107,20 @@ export const useLogin = (): UseLoginReturn => {
         return;
       }
 
-      setIsLoading(true);
       setErrors({});
 
-      // Llamada a la API de login
-      const result = await authService.login({
+      // Dispatch login action
+      const result = await dispatch(loginUser({
         email: formData.email.trim(),
         password: formData.password,
-      });
+      })).unwrap();
       
       // Navigate to home on success
       navigation.navigate('DrawerNavigation', { screen: 'Home' });
       
     } catch (error: any) {
-      const apiError = error as ApiError;
-      
-      if (apiError.errors) {
-        // Manejar errores de validación específicos del servidor
-        const newErrors: LoginFormErrors = {};
-        
-        if (apiError.errors.email) {
-          newErrors.email = apiError.errors.email[0];
-        }
-        if (apiError.errors.password) {
-          newErrors.password = apiError.errors.password[0];
-        }
-        
-        // Si hay errores específicos, usarlos; sino, usar mensaje general
-        if (Object.keys(newErrors).length > 0) {
-          setErrors(newErrors);
-        } else {
-          setErrors({ general: apiError.message });
-        }
-      } else {
-        // Manejar errores generales
-        let errorMessage = 'Login failed. Please try again.';
-        
-        if (apiError.status_code === 401) {
-          errorMessage = 'Invalid email or password.';
-        } else if (apiError.status_code === 422) {
-          errorMessage = 'Please check your input and try again.';
-        } else if (apiError.status_code === 0) {
-          errorMessage = 'Network error. Please check your connection.';
-        } else if (apiError.message) {
-          errorMessage = apiError.message;
-        }
-        
-        setErrors({ general: errorMessage });
-      }
-    } finally {
-      setIsLoading(false);
+      // Error is handled by Redux, but we can add specific form errors here
+      setErrors({ general: error || 'Login failed. Please try again.' });
     }
   };
 
@@ -161,7 +139,7 @@ export const useLogin = (): UseLoginReturn => {
   // Reset loading state when component focuses
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setIsLoading(false);
+      //setIsLoading(false);
     });
     return unsubscribe;
   }, [navigation]);
@@ -170,7 +148,7 @@ export const useLogin = (): UseLoginReturn => {
     // Form state
     formData,
     errors,
-    isLoading,
+    isLoading, // Now comes from Redux
     
     // Form handlers
     updateField,
