@@ -8,6 +8,7 @@ module.exports = {
         root: ['./'],
         alias: {
           '@core': './src/core',
+          '@api': './src/api',
           '@features': './src/features',
           '@infrastructure': './src/infrastructure',
           '@presentation': './src/presentation',

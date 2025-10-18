@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@presentation/navigation/RootStackParamList';
+import { authService, ApiError } from '@api/services/authService';
 
 type LoginNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -95,19 +96,51 @@ export const useLogin = (): UseLoginReturn => {
       setIsLoading(true);
       setErrors({});
 
-      // TODO: Aquí irá la llamada a la API de login
-      // const result = await loginUser(formData);
-      
-      // Simulación temporal
-      await new Promise<void>(resolve => setTimeout(() => resolve(), 2000));
+      // Llamada a la API de login
+      const result = await authService.login({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
       
       // Navigate to home on success
       navigation.navigate('DrawerNavigation', { screen: 'Home' });
       
     } catch (error: any) {
-      setErrors({ 
-        general: error.message || 'Login failed. Please try again.' 
-      });
+      const apiError = error as ApiError;
+      
+      if (apiError.errors) {
+        // Manejar errores de validación específicos del servidor
+        const newErrors: LoginFormErrors = {};
+        
+        if (apiError.errors.email) {
+          newErrors.email = apiError.errors.email[0];
+        }
+        if (apiError.errors.password) {
+          newErrors.password = apiError.errors.password[0];
+        }
+        
+        // Si hay errores específicos, usarlos; sino, usar mensaje general
+        if (Object.keys(newErrors).length > 0) {
+          setErrors(newErrors);
+        } else {
+          setErrors({ general: apiError.message });
+        }
+      } else {
+        // Manejar errores generales
+        let errorMessage = 'Login failed. Please try again.';
+        
+        if (apiError.status_code === 401) {
+          errorMessage = 'Invalid email or password.';
+        } else if (apiError.status_code === 422) {
+          errorMessage = 'Please check your input and try again.';
+        } else if (apiError.status_code === 0) {
+          errorMessage = 'Network error. Please check your connection.';
+        } else if (apiError.message) {
+          errorMessage = apiError.message;
+        }
+        
+        setErrors({ general: errorMessage });
+      }
     } finally {
       setIsLoading(false);
     }
