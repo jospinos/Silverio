@@ -39,7 +39,7 @@ class AuthService {
         ['user_data', JSON.stringify(response.data.data.user)],
       ]);
 
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       if (error.response?.data) {
         throw {

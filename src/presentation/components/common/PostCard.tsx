@@ -45,7 +45,7 @@ const PostCard = ({ id, name, profileimage, date, postimage, like, comment, post
                                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                         <Image
                                             style={{ width: 40, height: 40, borderRadius: 50 }}
-                                            source={profileimage}
+                                            source={{uri: profileimage}}
                                         />
                                         <Image
                                             style={{ width: 48, height: 48, position: 'absolute', resizeMode: 'contain' }}
@@ -56,7 +56,7 @@ const PostCard = ({ id, name, profileimage, date, postimage, like, comment, post
                                     <View>
                                         <Image
                                             style={{ width: 40, height: 40, borderRadius: 50 }}
-                                            source={profileimage}
+                                            source={{uri: profileimage}}
                                         />
                                     </View>
                             }
@@ -192,7 +192,7 @@ const PostCard = ({ id, name, profileimage, date, postimage, like, comment, post
                                     <Image
                                         key={index}
                                         style={{ width: '100%', height: '100%' }}
-                                        source={data.image}
+                                        source={{uri: data.image}}
                                     />
                                 )
                             })}

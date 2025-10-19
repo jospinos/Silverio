@@ -33,8 +33,8 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
-  email,
-  password,
+  email = 'alex@example.com',
+  password = '123456',
   errors,
   showPassword,
   inputFocus,
